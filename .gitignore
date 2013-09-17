@@ -4,6 +4,7 @@
 ssl/
 **/ssl/
 **/nbproject/
+**nbproject
 
 # Compiled source #
 ###################
