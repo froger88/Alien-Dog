@@ -52,6 +52,11 @@
 #include <iostream>
 #include <thread>
 #include <sys/time.h>
+#include <string>
+#include <iomanip>
+#include <sstream>
+
+#include <openssl/md5.h>
 
 using namespace std;
 
@@ -161,12 +166,37 @@ long double set_resolution()
 long double find_md5_range(long double start, long double stop,
   long double resolution, string& md5)
 {
+	unsigned char digest[MD5_DIGEST_LENGTH];
+	char md5_result[33];
+	stringstream sstr(stringstream::in | stringstream::out);
+	string str;
 
+	for (start; start <= stop; start += resolution) {
+
+		// convert to str
+		sstr << setprecision(100) << start << endl;
+		str = sstr.str();
+
+		MD5((const unsigned char*) str.c_str(), str.size(), (unsigned char*) &digest);
+
+		// convert result to hex-str
+		for (int i = 0; i < 16; i++) {
+			sprintf(&md5_result[i * 2], "%02x", (unsigned int) digest[i]);
+		}
+
+		// if match, return value
+		if (md5.compare(md5_result)) {
+			return start;
+		}
+	}
 	return -1.0;
 }
 
 int main(int argc, char** argv)
 {
+	// turn off sync with stdio, it is not needed and can improve speed of streams
+	ios_base::sync_with_stdio(false);
+
 	unsigned int th_num;
 	long double range_start, range_stop, resolution;
 
