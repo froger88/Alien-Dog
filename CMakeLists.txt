@@ -9,7 +9,7 @@ ADD_DEFINITIONS(
     -std=c++11
 )
 
-add_executable (secure_talk_server
+add_executable (alien_dog
 	main.cpp
 )
 

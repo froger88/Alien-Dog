@@ -45,3 +45,4 @@ ssl/
 .Trashes
 ehthumbs.db
 Thumbs.db
+/build/
