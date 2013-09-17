@@ -168,15 +168,16 @@ long double find_md5_range(long double start, long double stop,
 {
 	unsigned char digest[MD5_DIGEST_LENGTH];
 	char md5_result[33];
-	stringstream sstr(stringstream::in | stringstream::out);
 	string str;
 
 	for (start; start <= stop; start += resolution) {
 
 		// convert to str
-		sstr << setprecision(100) << start << endl;
+		stringstream sstr(stringstream::in | stringstream::out);
+		sstr << setprecision(10) << start << endl;
 		str = sstr.str();
 
+		// generate MD5 hash
 		MD5((const unsigned char*) str.c_str(), str.size(), (unsigned char*) &digest);
 
 		// convert result to hex-str
@@ -185,23 +186,44 @@ long double find_md5_range(long double start, long double stop,
 		}
 
 		// if match, return value
-		if (md5.compare(md5_result)) {
+		if (md5.compare(md5_result) == 0) {
 			return start;
 		}
 	}
 	return -1.0;
 }
 
+/**
+ * Quick test
+ * @return - nothing
+ */
+void test()
+{
+	string looking_for = "8f857f8cbb8bbd725823604e32069be2"; // value of (md5("22.7803"))
+	long double start = 0.0;
+	long double stop = 100.0;
+	long double resolution = 0.0001;
+
+	long double result = find_md5_range(start, stop, resolution, looking_for);
+	if (result > 22.7802 && result < 22.7804) {
+		cout << "TEST RESULT OK" << endl;
+	} else {
+		cout << "TEST RESULT FAIL" << endl;
+	}
+}
+
 int main(int argc, char** argv)
 {
 	// turn off sync with stdio, it is not needed and can improve speed of streams
-	ios_base::sync_with_stdio(false);
+	//ios_base::sync_with_stdio(false);
 
+	// run quick test
+	test();
 	unsigned int th_num;
 	long double range_start, range_stop, resolution;
 
 	// read basic config from stdin
-	th_num = set_thread_num();
+	th_num = 1; // set_thread_num();
 	range_start = set_range_start();
 	range_stop = set_range_stop();
 	resolution = set_resolution();
@@ -221,6 +243,7 @@ int main(int argc, char** argv)
 	// one threaded prototype run:
 	cout << "Result is: " <<
 	  find_md5_range(range_start, range_stop, resolution, md5) << endl;
-	return 0;
+
+	return EXIT_SUCCESS;
 }
 
