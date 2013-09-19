@@ -2,6 +2,8 @@
 
 mkdir -p build
 cd build
-cmake ..
+cmake ../cpp/
 make
-
+cp alien_dog ../
+cd ..
+rm build -rf
